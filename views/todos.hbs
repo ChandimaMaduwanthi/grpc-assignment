@@ -1,0 +1,160 @@
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>gRPC with Node js</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        .editbtn {
+            background-color: #764abc;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="py-5 text-center">
+            <h2>Todo List</h2>
+        </div>
+
+        <table class="table" id="todo_table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each results}}
+                <tr>
+                    <td>{{ id }}</td>
+                    <td>{{ title }}</td>
+                    <td>{{ description }}</td>
+                    <td>
+                        <a href="javascript:void(0);" class="btn btn-sm edit editbtn" data-id="{{ id }}" data-title="{{ title }}" data-description="{{ description }}">Edit</a>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger remove" data-id="{{ id }}">Remove</a>
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="5" class="text-center">No data to display.</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <button class="btn btn-success float-right" data-toggle="modal" data-target="#newTodoModal">Add New</button>
+    </div>
+
+    <!-- New Todo Modal -->
+    <form action="/save" method="post">
+        <div class="modal fade" id="newTodoModal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">New Todo</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" name="title" class="form-control" placeholder="Todo title"
+                                required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" name="description" class="form-control" placeholder="Todo description" required="required">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn editbtn">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Edit Todo Modal -->
+    <form action="/update" method="post">
+        <div class="modal fade" id="editTodoModal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Todo</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" name="title" class="form-control name" placeholder="Todo title"
+                                required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" name="description" class="form-control age" placeholder="Todo description"
+                                required="required">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="id" class="todo_id">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn editbtn">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Remove Todo Modal -->
+    <form id="add-row-form" action="/remove" method="post">
+        <div class="modal fade" id="removeTodoModal" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title"></h4>Remove Todo</h4>
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="todo_id" class="form-control todo_id_removal"
+                            required="required">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn editbtn">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $('#todo_table').on('click', '.edit', function () {
+                $('#editTodoModal').modal('show');
+
+                $('.todo_id').val($(this).data('id'));
+                $('.title').val($(this).data('title'));
+                $('.description').val($(this).data('description'));
+            }).on('click', '.remove', function () {
+                $('#removeTodoModal').modal('show');
+
+                $('.todo_id_removal').val($(this).data('id'));
+            });
+        });
+    </script>
+</body>
+
+</html>
